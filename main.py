@@ -1,10 +1,14 @@
 from flask import Flask, jsonify, abort, request
 from flask import make_response
+from flask import render_template
+
 from models import initialize, Task
 
 DEBUG = True
 
-app = Flask(__name__)
+app = Flask(__name__,
+            static_folder = "./dist/static",
+            template_folder='./dist')
 
 @app.errorhandler(404)
 def not_found(error):
@@ -58,6 +62,21 @@ def delete_task(task_id):
 
     task.delete_element()
     return jsonify({'result': True})
+
+@app.route('/')
+def index():
+    return render_template('index.html')
+
+@app.route('/demo')
+def test_demo():
+    return jsonify('Eduardo Ismael!')
+
+
+@app.route('/', defaults={'path': ''})
+@app.route('/<path:path>')
+def catch_all(path):
+    return render_template("index.html")
+
 
 if __name__ == '__main__':
     initialize()
